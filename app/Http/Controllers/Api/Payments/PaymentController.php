@@ -19,10 +19,10 @@ class PaymentController extends Controller
     public function paymentReceived(Request $request): PaymentResponse
     {
         if (!$this->isSignatureCorrect($request)) {
-            return new PaymentResponse(false, "Parameters are incorrect", 422);
+            return new PaymentResponse(false, 422);
         }
         if (!$this->isAdvertAvailable($request->input('item_id'))) {
-            return new PaymentResponse(false, "Parameters are incorrect");
+            return new PaymentResponse(false);
         }
 
         $this->connection->table('payments')->insert([
@@ -40,7 +40,7 @@ class PaymentController extends Controller
         $this->connection->table('adverts')
             ->where('id', $advert->id)
             ->update(['balance' => $advert->balance + $request->input('amount')]);
-        return new PaymentResponse(true, "All set");
+        return new PaymentResponse(true);
     }
 
     function isAdvertAvailable(int $id): bool
