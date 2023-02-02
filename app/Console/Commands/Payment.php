@@ -13,7 +13,7 @@ class Payment extends Command
      *
      * @var string
      */
-    protected $signature = 'hourly';
+    protected $signature = 'charge:hourly';
 
     /**
      * The console command description.
@@ -32,9 +32,9 @@ class Payment extends Command
 
     public function handle(): void
     {
-        $result = $this->connection->select('SELECT 2+2 AS value');
-        dump("2 + 2 = {$result[0]->value}");
-
-        dump("Тут выполняется код каждый час");
+        $query = "UPDATE adverts, categories
+                  SET adverts.balance = adverts.balance - categories.price
+                  WHERE adverts.category_id = categories.id and adverts.balance >= categories.price";
+        $this->connection->update($query);
     }
 }

@@ -20,6 +20,7 @@ class CatalogResponse extends JsonResponse
                 'title'       => $record->title,
                 'description' => $record->description,
                 'contact'     => $record->contacts,
+                'balance'     => $record->balance,
             ];
         }
         return $result;

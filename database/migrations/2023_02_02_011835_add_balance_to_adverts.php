@@ -14,7 +14,7 @@ class AddBalanceToAdverts extends Migration
     public function up()
     {
         Schema::table('adverts', function (Blueprint $table) {
-            $table->integer('balance')->default(0);
+            $table->double('balance')->default(0);
         });
     }
 

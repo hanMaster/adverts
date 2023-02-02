@@ -18,14 +18,17 @@ final class CatalogController
 
     public function index(CatalogRequest $request): CatalogResponse
     {
-        $records = $this->connection->table('adverts')
-            ->where('category_id', '=', $request->getCategoryId())
-            ->limit(self::ITEMS_PER_PAGE)
-            ->offset($request->getPage() * self::ITEMS_PER_PAGE)
-            ->orderBy('id', 'DESC')
-            ->get()
-            ->all();
-
+        $records = $this->connection
+            ->select("SELECT * from adverts as a
+            INNER JOIN categories c on a.category_id = c.id
+            WHERE category_id = :id && balance >= price
+            ORDER BY a.id DESC
+            LIMIT :limit
+            OFFSET :offset", [
+                'id' => $request->getCategoryId(),
+                'limit' => self::ITEMS_PER_PAGE,
+                'offset' => $request->getPage() * self::ITEMS_PER_PAGE
+            ]);
         return new CatalogResponse($records);
     }
 

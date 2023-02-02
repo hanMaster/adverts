@@ -14,3 +14,4 @@
 
 $router->get('catalog', 'Catalog\\CatalogController@index');
 $router->get('catalog/{id}', 'Catalog\\CatalogController@advert');
+$router->post('payment', 'Payments\\PaymentController@paymentReceived');
