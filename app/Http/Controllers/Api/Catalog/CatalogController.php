@@ -24,11 +24,12 @@ final class CatalogController
             WHERE category_id = :id && balance >= price
             ORDER BY a.id DESC
             LIMIT :limit
-            OFFSET :offset", [
-                'id' => $request->getCategoryId(),
-                'limit' => self::ITEMS_PER_PAGE,
-                'offset' => $request->getPage() * self::ITEMS_PER_PAGE
-            ]);
+            OFFSET :offset",
+                [
+                    'id' => $request->getCategoryId(),
+                    'limit' => self::ITEMS_PER_PAGE,
+                    'offset' => $request->getPage() * self::ITEMS_PER_PAGE
+                ]);
         return new CatalogResponse($records);
     }
 
