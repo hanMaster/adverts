@@ -21,7 +21,7 @@ final class CatalogController
         $records = $this->connection
             ->select("SELECT * from adverts as a
             INNER JOIN categories c on a.category_id = c.id
-            WHERE category_id = :id && balance >= price
+            WHERE category_id = :id && balance >= (price / 24)
             ORDER BY a.id DESC
             LIMIT :limit
             OFFSET :offset",
