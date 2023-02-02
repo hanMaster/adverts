@@ -19,8 +19,7 @@ class CatalogResponse extends JsonResponse
                 'id'          => $record->id,
                 'title'       => $record->title,
                 'description' => $record->description,
-                'contact'     => $record->contacts,
-                'balance'     => $record->balance,
+                'contact'     => $record->contacts
             ];
         }
         return $result;
