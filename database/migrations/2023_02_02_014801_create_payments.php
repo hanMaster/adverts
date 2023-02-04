@@ -15,7 +15,7 @@ class CreatePayments extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('transaction_id', length: 40);
+            $table->string('transaction_id', length: 40)->unique();
             $table->unsignedInteger('advert_id'); // item_id
             $table->string('site_id', length: 40);
             $table->double('amount')->default(0);

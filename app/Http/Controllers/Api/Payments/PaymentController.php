@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class PaymentController extends Controller
 {
@@ -24,23 +25,27 @@ class PaymentController extends Controller
         if (!$this->isAdvertAvailable($request->input('item_id'))) {
             return new PaymentResponse(false);
         }
+        try {
 
-        $this->connection->table('payments')->insert([
-            'transaction_id' => $request->input('transaction_id'),
-            'advert_id' => $request->input('item_id'),
-            'site_id' => $request->input('site_id'),
-            'amount' => $request->input('amount'),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            $this->connection->table('payments')->insert([
+                'transaction_id' => $request->input('transaction_id'),
+                'advert_id' => $request->input('item_id'),
+                'site_id' => $request->input('site_id'),
+                'amount' => $request->input('amount'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        $advert = $this->connection->table('adverts')
-            ->where('id', $request->input('item_id'))
-            ->first(['id', 'balance']);
-        $this->connection->table('adverts')
-            ->where('id', $advert->id)
-            ->update(['balance' => $advert->balance + $request->input('amount')]);
-        return new PaymentResponse(true);
+            $advert = $this->connection->table('adverts')
+                ->where('id', $request->input('item_id'))
+                ->first(['id', 'balance']);
+            $this->connection->table('adverts')
+                ->where('id', $advert->id)
+                ->update(['balance' => $advert->balance + $request->input('amount')]);
+            return new PaymentResponse(true);
+        } catch (\Exception $e) {
+            return new PaymentResponse(false, 422);
+        }
     }
 
     function isAdvertAvailable(int $id): bool
