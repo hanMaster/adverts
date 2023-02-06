@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\Payments;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessPayment;
 use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class PaymentController extends Controller
 {
@@ -19,36 +19,21 @@ class PaymentController extends Controller
 
     public function paymentReceived(Request $request): PaymentResponse
     {
-        if (!$this->isSignatureCorrect($request)) {
-            return new PaymentResponse(false, 422);
+        $dto = new PaymentDto($request);
+
+        if ($this->processedTransaction($dto->transaction_id)) {
+            return new PaymentResponse(true);
         }
-        if (!$this->isAdvertAvailable($request->input('item_id'))) {
+
+        if (!$this->isValidAdvert($dto->advert_id)) {
             return new PaymentResponse(false);
         }
-        try {
 
-            $this->connection->table('payments')->insert([
-                'transaction_id' => $request->input('transaction_id'),
-                'advert_id' => $request->input('item_id'),
-                'site_id' => $request->input('site_id'),
-                'amount' => $request->input('amount'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            $advert = $this->connection->table('adverts')
-                ->where('id', $request->input('item_id'))
-                ->first(['id', 'balance']);
-            $this->connection->table('adverts')
-                ->where('id', $advert->id)
-                ->update(['balance' => $advert->balance + $request->input('amount')]);
-            return new PaymentResponse(true);
-        } catch (\Exception $e) {
-            return new PaymentResponse(false, 422);
-        }
+        ProcessPayment::dispatch($dto);
+        return new PaymentResponse(true);
     }
 
-    function isAdvertAvailable(int $id): bool
+    function isValidAdvert(int $id): bool
     {
         $advert = $this->connection->table('adverts')
             ->where('adverts.id', '=', $id)
@@ -58,15 +43,13 @@ class PaymentController extends Controller
         return !!$advert;
     }
 
-    function isSignatureCorrect(Request $request): bool
+    function processedTransaction(string $tx_id): bool
     {
-        $signature = $request->input('signature');
-        $key = env('APP_KEY');
-        $transaction = $request->input('transaction_id');
-        $item = $request->input('item_id');
-        $site = $request->input('site_id');
-        $amount = $request->input('amount');
-        $str = $key . "&transaction=" . $transaction . "&item_id=" . $item . "&site_id=" . $site . "&amount=" . $amount;
-        return sha1($str) === $signature;
+        $tx = $this->connection->table('payments')
+            ->where('payments.transaction_id', '=', $tx_id)
+            ->get()
+            ->first();
+
+        return !!$tx;
     }
 }

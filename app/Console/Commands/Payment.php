@@ -33,8 +33,9 @@ class Payment extends Command
     public function handle(): void
     {
         $query = "UPDATE adverts, categories
-                  SET adverts.balance = adverts.balance - (categories.price / 24)
-                  WHERE adverts.category_id = categories.id and adverts.balance >= (categories.price / 24)";
+                  SET adverts.balance = adverts.balance - categories.price / 24
+                  WHERE adverts.category_id = categories.id AND
+                      (adverts.balance > (categories.price / 24) OR (ABS(adverts.balance - (categories.price / 24)) <= 0.0001))";
         $this->connection->update($query);
     }
 }
