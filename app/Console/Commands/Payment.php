@@ -34,8 +34,7 @@ class Payment extends Command
     {
         $query = "UPDATE adverts, categories
                   SET adverts.balance = adverts.balance - categories.price / 24
-                  WHERE adverts.category_id = categories.id AND
-                      (adverts.balance > (categories.price / 24) OR (ABS(adverts.balance - (categories.price / 24)) <= 0.0001))";
+                  WHERE adverts.category_id = categories.id AND adverts.balance >= (categories.price / 24)";
         $this->connection->update($query);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Payments;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\PaymentRequest;
 
 class PaymentDto
 {
@@ -12,12 +12,12 @@ class PaymentDto
     public float $amount;
     public string $signature;
 
-    public function __construct(Request $request )
+    public function __construct(PaymentRequest $request)
     {
         $this->transaction_id = $request->input('transaction_id');
         $this->advert_id = (int)$request->input('item_id');
         $this->site_id = $request->input('site_id');
-        $this->amount = (float)$request->input('amount');
+        $this->amount = (int)($request->input('amount') * 100);
         $this->signature = $request->input('signature');
     }
 }

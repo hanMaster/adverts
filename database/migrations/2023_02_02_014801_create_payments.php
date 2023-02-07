@@ -18,7 +18,7 @@ class CreatePayments extends Migration
             $table->string('transaction_id', length: 40)->unique();
             $table->unsignedInteger('advert_id'); // item_id
             $table->string('site_id', length: 40);
-            $table->float('amount')->default(0);
+            $table->integer('amount')->default(0);
             $table->timestamps();
 
             $table->index(['advert_id'], 'adverts');

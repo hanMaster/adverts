@@ -32,27 +32,27 @@ class DatabaseSeeder extends Seeder
             [
                 'id'    => 2,
                 'title' => 'Холодильники',
-                'price' => 50,
+                'price' => 208,
             ],
             [
                 'id'    => 3,
                 'title' => 'Смартфоны',
-                'price' => 50,
+                'price' => 208,
             ],
             [
                 'id'    => 4,
                 'title' => 'Стиральные машины',
-                'price' => 50,
+                'price' => 208,
             ],
             [
                 'id'    => 5,
                 'title' => 'Игровые приставки',
-                'price' => 100,
+                'price' => 9984,
             ],
             [
                 'id'    => 6,
                 'title' => 'Подарки',
-                'price' => 10,
+                'price' => 1008,
             ],
         ]);
 
